@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-var sequelize = require('../db');
+let sequelize = require('../db');
 
 const User = sequelize.define("user", {
     id: {
@@ -13,7 +13,7 @@ const User = sequelize.define("user", {
         allowNull: false,
         unique: true,
         validate: {
-            isAlpha: true,
+            isAlpha: true
         },
     },
 

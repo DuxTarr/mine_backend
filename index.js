@@ -27,9 +27,8 @@ app.post("/user/register", urlencodedParser, function (req, res) {
     if(!req.body) return res.sendStatus(400);
 
     let name = req.body.name;
-    let age = req.body.age;
 
-    User.create({ name: name, age: age}).then(user=>{
+    User.create({ name: name }).then(user=>{
         res.send(user);
     }).catch(err=>{
         res.send(err.errors)
