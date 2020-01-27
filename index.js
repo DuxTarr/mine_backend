@@ -9,6 +9,8 @@ const urlencodedParser = bodyParser.json();
 let sequelize = require('./db');
 let User = require('./models/user');
 
+const JwtService = require('./library/jwt_service');
+const Auth = require('./library/auth');
 
 sequelize.sync().then(()=>{
     app.listen(3003, function(){
@@ -16,7 +18,25 @@ sequelize.sync().then(()=>{
     });
 }).catch(err=>console.log(err));
 
-app.get("/user/list", function(req, res){
+
+app.post("/user/sign", urlencodedParser, function (req, res) {
+
+    if(!req.body) return res.sendStatus(400);
+    let id = req.body.id;
+    let token = JwtService.signToken(id);
+    res.send(token);
+});
+
+app.post("/user/un-sign", urlencodedParser, function(req, res){
+    if(!req.body) return res.sendStatus(400);
+    let token = req.body.token;
+    console.log(token);
+    let id = JwtService.unSignToken(token);
+    console.log(id.id);
+    res.send(id);
+});
+
+app.get("/user/list", Auth.checkToken, function(req, res){
     User.findAll({raw: true }).then(data=>{
         res.send(data);
     }).catch(err=>console.log(err));
@@ -35,7 +55,7 @@ app.post("/user/register", urlencodedParser, function (req, res) {
     });
 });
 
-app.get("/user/:id", function(req, res){
+app.get("/user/:id", Auth.checkToken, function(req, res){
     const userid = req.params.id;
     User.findAll({where:{id: userid}, raw: true })
         .then(user=>{
@@ -45,7 +65,7 @@ app.get("/user/:id", function(req, res){
         });
 });
 
-app.post("/edit", urlencodedParser, function (req, res) {
+app.post("/edit", urlencodedParser, Auth.checkToken, function (req, res) {
 
     if(!req.body) return res.sendStatus(400);
 
@@ -59,7 +79,7 @@ app.post("/edit", urlencodedParser, function (req, res) {
     });
 });
 
-app.post("/delete/:id", function(req, res){
+app.post("/delete/:id", Auth.checkToken, function(req, res){
     const userid = req.params.id;
     User.destroy({where: {id: userid} }).then(() => {
         res.redirect("/");
