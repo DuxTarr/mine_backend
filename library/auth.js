@@ -25,7 +25,6 @@ let Auth = {
                     });
                 } else {
                     req.decoded = decoded;
-                    next.pushed = 'pushed123123';
                     next();
                 }
             });
