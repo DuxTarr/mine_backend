@@ -8,6 +8,8 @@ const urlencodedParser = bodyParser.json();
 
 let sequelize = require('./db');
 let User = require('./models/user');
+let Steve = require('./models/steve');
+let SteveService = require('./services/steve');
 
 const JwtService = require('./library/jwt_service');
 const Auth = require('./library/auth');
@@ -64,6 +66,34 @@ app.get("/user/:id", Auth.checkToken, function(req, res){
             res.send(err.errors)
         });
 });
+
+// Steve section
+
+app.post("/steve/add", urlencodedParser, Auth.checkToken, function (req, res) {
+
+    if(!req.body) return res.sendStatus(400);
+
+    let name = req.body.name,
+        userId = req.decoded.id;
+
+    console.log(name,userId);
+
+    SteveService.create(name, userId).then(steve=>{
+        res.send(steve);
+    }).catch(err=>{
+        res.send(err.errors)
+    });
+});
+
+app.get("/steve/list", urlencodedParser, Auth.checkToken, function(req, res){
+    Steve.findAll({raw: true }).then(data=>{
+        res.send(data);
+    }).catch(err=>{
+        res.send(err.errors)
+    });
+});
+
+// End Steve section
 
 app.post("/edit", urlencodedParser, Auth.checkToken, function (req, res) {
 
