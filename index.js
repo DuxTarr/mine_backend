@@ -9,7 +9,9 @@ const urlencodedParser = bodyParser.json();
 let sequelize = require('./db');
 let User = require('./models/user');
 let Steve = require('./models/steve');
+let Fight = require('./models/fight');
 let SteveService = require('./services/steve');
+let FightService = require('./services/fight');
 
 const JwtService = require('./library/jwt_service');
 const Auth = require('./library/auth');
@@ -76,8 +78,6 @@ app.post("/steve/add", urlencodedParser, Auth.checkToken, function (req, res) {
     let name = req.body.name,
         userId = req.decoded.id;
 
-    console.log(name,userId);
-
     SteveService.create(name, userId).then(steve=>{
         res.send(steve);
     }).catch(err=>{
@@ -94,6 +94,32 @@ app.get("/steve/list", urlencodedParser, Auth.checkToken, function(req, res){
 });
 
 // End Steve section
+
+// Fight section
+
+app.post("/fight/add", urlencodedParser, Auth.checkToken, function (req, res) {
+
+    if(!req.body) return res.sendStatus(400);
+
+    let steveId = req.body.steveId,
+        enemyId = req.body.enemyId;
+
+    FightService.create(steveId, enemyId).then(steve=>{
+        res.send(steve);
+    }).catch(err=>{
+        res.send(err.errors)
+    });
+});
+
+app.get("/fight/list", urlencodedParser, Auth.checkToken, function(req, res){
+    Fight.findAll({raw: true }).then(data=>{
+        res.send(data);
+    }).catch(err=>{
+        res.send(err.errors)
+    });
+});
+
+// End Fight section
 
 app.post("/edit", urlencodedParser, Auth.checkToken, function (req, res) {
 
