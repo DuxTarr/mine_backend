@@ -13,8 +13,8 @@ let SteveService = {
         return Steve.create({
             userId: ownerId,
             name: name,
-            skillsDna: '0xFF9900',
-            appearanceDna: '0xFF9900',
+            skillsDna: '0x' + Math.floor(Math.random()*Math.pow(16, 8)).toString(16).toUpperCase() + Math.floor(Math.random()*Math.pow(16, 8)).toString(16).toUpperCase(),
+            appearanceDna: '0x' + Math.floor(Math.random()*Math.pow(16, 8)).toString(16).toUpperCase() + Math.floor(Math.random()*Math.pow(16, 8)).toString(16).toUpperCase(),
             status: this.STATUS_NEW
         });
     },
